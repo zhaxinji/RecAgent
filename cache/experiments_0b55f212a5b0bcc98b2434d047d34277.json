@@ -1,0 +1,96 @@
+{
+  "datasets": [
+    {
+      "name": "LastFM",
+      "description": "LastFM数据集是一个音乐推荐数据集，包含用户对歌曲的点击行为。经过预处理后，数据集包含3,804,922次点击，涉及39,163个物品。数据集被随机划分为269,847个训练会话、5,996个验证会话和5,771个测试会话。",
+      "statistics": "点击数: 3,804,922; 物品数: 39,163; 训练会话数: 269,847; 验证会话数: 5,996; 测试会话数: 5,771"
+    },
+    {
+      "name": "YOOCHOOSE 1/64",
+      "description": "YOOCHOOSE数据集是一个电子商务推荐数据集，包含用户对商品的点击行为。1/64表示数据集的子集。",
+      "statistics": "论文中未提供具体统计数据"
+    },
+    {
+      "name": "YOOCHOOSE 1/4",
+      "description": "YOOCHOOSE数据集的另一个子集，规模比1/64更大。",
+      "statistics": "论文中未提供具体统计数据"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Recall@20",
+      "description": "Recall@20是主要的评价指标，表示在推荐列表的前20个物品中包含真实物品的比例。计算方法为：真实物品在推荐列表前20中的次数除以总推荐次数。"
+    },
+    {
+      "name": "MRR@20",
+      "description": "MRR@20（Mean Reciprocal Rank）是平均倒数排名，表示真实物品在推荐列表中的排名的倒数的平均值。如果真实物品不在前20名中，则倒数排名为0。"
+    }
+  ],
+  "baselines": [
+    {
+      "name": "POP",
+      "description": "POP方法总是推荐训练集中最流行的物品。这是一个简单的基线方法，但在某些领域表现良好。"
+    },
+    {
+      "name": "S-POP",
+      "description": "S-POP推荐当前会话中最流行的物品。如果出现平局，则使用全局流行度值来打破平局。"
+    },
+    {
+      "name": "Item-KNN",
+      "description": "Item-KNN方法推荐与当前物品相似的物品。相似度定义为两个物品在会话中共同出现的次数除以它们各自出现次数的平方根的乘积。"
+    },
+    {
+      "name": "BPR-MF",
+      "description": "BPR-MF使用随机梯度下降优化成对排序目标函数。在会话推荐中，通过平均会话中物品的潜在因子来表示会话。"
+    },
+    {
+      "name": "FPMC",
+      "description": "FPMC结合了马尔可夫链模型和矩阵分解，用于下一个篮子推荐任务。在会话推荐中，忽略用户潜在表示。"
+    },
+    {
+      "name": "GRU-Rec",
+      "description": "GRU-Rec使用会话并行的小批量训练过程和基于排名的损失函数来学习模型。"
+    },
+    {
+      "name": "RNN-KNN",
+      "description": "RNN-KNN结合了基于启发式的最近邻方案和GRU，用于会话推荐。"
+    },
+    {
+      "name": "Improved GRU-Rec",
+      "description": "Improved GRU-Rec采用数据增强和输入数据分布偏移的方法来改进GRU-Rec的性能。"
+    },
+    {
+      "name": "NARM",
+      "description": "NARM是一种改进的编码器-解码器架构，用于会话推荐。通过将注意力机制引入RNN来改进性能。"
+    },
+    {
+      "name": "RUM-I",
+      "description": "RUM-I是RUM的一种实现，直接在记忆矩阵中存储物品嵌入。"
+    },
+    {
+      "name": "CMN",
+      "description": "CMN利用记忆网络处理隐式反馈的协同过滤。在会话推荐中，通过平均会话中物品的潜在表示来表示会话。"
+    }
+  ],
+  "experimentalSetup": "实验使用Tensorflow实现，并在GeForce GTX TitanX GPU上运行。为了防止过拟合，使用了两个dropout层：第一个dropout层位于物品嵌入层和GRU层之间，dropout率为25%；第二个dropout层位于最终表示层和双线性解码层之间，dropout率为50%。模型参数使用高斯分布（均值为0，标准差为0.01）随机初始化，并使用小批量Adam优化器进行优化。Adam优化器的超参数设置为β1=0.9，β2=0.999，ϵ=10^-8。学习率通过网格搜索在[0.001, 0.0005, 0.0001]范围内确定，批量大小经验性地设置为512。物品嵌入维度和GRU隐藏单元数通过网格搜索在[50, 100, 150]范围内确定。邻居数量在[128, 256, 512]范围内变化。所有超参数根据验证集进行调整。",
+  "results": "CSRM在所有数据集上均取得了最佳性能，Recall@20和MRR@20均优于基线方法。具体来说，CSRM在YOOCHOOSE 1/64、YOOCHOOSE 1/4和LastFM数据集上的Recall@20分别比最佳基线NARM提高了1.88%、2.89%和0.45%，MRR@20分别提高了3.48%、3.12%和5.77%。RNN-based方法普遍优于传统方法，表明RNN-based模型擅长处理会话中的序列信息。CSRM显著优于所有RNN-based基线方法，表明利用记忆网络结合协同邻居信息可以显著提升会话推荐的性能。",
+  "analysis": "作者通过实验结果分析了不同方法的性能差异。传统方法中，Item-KNN和FPMC表现较好，表明KNN-based协同过滤方法和序列信息对会话推荐有帮助。RNN-based方法普遍优于传统方法，表明RNN擅长处理序列信息。CSRM通过结合当前会话信息和协同邻居信息，进一步提升了性能。记忆网络方法（如RUM和CMN）在会话推荐中表现不佳，因为它们依赖于用户信息，而会话推荐中没有用户信息。",
+  "ablationStudies": [
+    {
+      "name": "CSRMime vs CSRMome",
+      "description": "CSRMime是CSRM去掉OME部分，仅使用RNN的内部记忆建模当前会话的序列行为，相当于NARM模型。CSRMome是CSRM去掉IME部分，仅使用外部记忆编码协同邻居信息。实验结果表明，CSRMime优于CSRMome，表明会话自身的序列信息更重要。CSRM结合两者后性能进一步提升，表明结合当前会话信息和协同邻居信息对推荐有帮助。"
+    },
+    {
+      "name": "聚合操作比较",
+      "description": "比较了max pooling、average pooling、concatenation和fusion gating四种聚合操作。结果表明，fusion gating机制在所有数据集上表现最佳，表明其在建模IME和OME之间的交互方面更有效。average pooling和concatenation表现相似，均优于max pooling。"
+    },
+    {
+      "name": "邻居数量影响",
+      "description": "比较了邻居数量k=128、256、512时的性能。结果表明，随着k的增加，性能有所提升，尤其是在YOOCHOOSE数据集上。在LastFM数据集上，k=512时性能最佳。"
+    },
+    {
+      "name": "会话长度影响",
+      "description": "比较了不同会话长度下的性能。结果表明，CSRM在短会话（1-10个物品）上的性能提升更明显，表明协同邻居信息对短会话的意图捕捉更有帮助。"
+    }
+  ]
+}

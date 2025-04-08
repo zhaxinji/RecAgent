@@ -1,0 +1,91 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: recagent-backend
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+      - minio
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    networks:
+      - recagent-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: recagent-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init_scripts:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - recagent-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: recagent-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - recagent-network
+    restart: unless-stopped
+
+  elasticsearch:
+    image: elasticsearch:8.9.0
+    container_name: recagent-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - recagent-network
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: recagent-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+    command: server /data --console-address ":9001"
+    networks:
+      - recagent-network
+    restart: unless-stopped
+
+networks:
+  recagent-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+  minio_data: 

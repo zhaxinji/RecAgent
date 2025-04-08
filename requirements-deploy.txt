@@ -1,0 +1,63 @@
+# 核心Web框架
+fastapi>=0.95.0
+uvicorn>=0.21.1
+python-multipart>=0.0.6
+email-validator>=2.0.0
+pydantic>=2.0.0
+pydantic-core>=2.0.0
+pydantic-settings>=2.0.0
+httpx>=0.24.0
+starlette>=0.30.0
+gunicorn>=21.2.0
+
+# 数据库
+sqlalchemy>=2.0.0
+alembic>=1.10.0
+pymysql>=1.0.3
+SQLAlchemy-Utils>=0.41.0
+
+# 认证和安全
+python-jose>=3.3.0
+passlib>=1.7.4
+bcrypt>=4.0.1
+pyjwt>=2.6.0
+python-dotenv>=1.0.0
+
+# AI和ML集成（核心）
+openai>=1.0.0
+anthropic>=0.4.0
+langchain>=0.0.267
+langchain-core>=0.1.0
+langchain-openai>=0.0.1
+langchain-community>=0.0.10
+tiktoken>=0.4.0
+deepseek-ai>=0.0.1
+
+# 科学计算和数据处理（核心）
+numpy>=1.24.2
+pandas>=2.0.0
+
+# 文档处理（核心）
+pypdf>=3.7.0
+PyMuPDF>=1.21.1
+python-docx>=0.8.11
+
+# 论文搜索和分析（核心）
+arxiv>=2.0.0
+scholarly>=1.7.11
+xmltodict>=0.13.0
+lxml>=4.9.2
+beautifulsoup4>=4.11.2
+
+# 网络请求
+requests>=2.31.0
+aiohttp>=3.8.4
+
+# 工具库
+pyyaml>=6.0
+tqdm>=4.65.0
+tenacity>=8.2.2
+
+# 文本处理
+nltk>=3.8.1
+jieba>=0.42.1 
